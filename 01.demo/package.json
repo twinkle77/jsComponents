@@ -1,7 +1,7 @@
 {
-    "name": "{{name}}",
+    "name": "demo",
     "version": "1.0.0",
-    "description": "{{description}}",
+    "description": "测试组件",
     "main": "index.js",
     "scripts": {
       "dev": "webpack-dev-server --mode development --open --content-base examples/",

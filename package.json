@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "practive",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "init": "node script/init.js"
   },
   "repository": {
     "type": "git",

@@ -5,7 +5,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin') // webpack自带
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const autoprefixer = require("autoprefixer")
 
-const name = '{{name}}'
+const name = 'demo'
 
 module.exports = {
     cache: false,
