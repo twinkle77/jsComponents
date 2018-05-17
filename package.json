@@ -1,0 +1,25 @@
+{
+  "name": "jscomponents",
+  "version": "1.0.0",
+  "description": "practive",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twinkle77/jsComponents.git"
+  },
+  "author": "twinkle77",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/twinkle77/jsComponents/issues"
+  },
+  "homepage": "https://github.com/twinkle77/jsComponents#readme",
+  "devDependencies": {
+    "async": "^2.6.0",
+    "chalk": "^2.4.1",
+    "consolidate": "^0.15.1",
+    "metalsmith": "^2.3.0",
+    "ora": "^2.1.0"
+  }
+}
