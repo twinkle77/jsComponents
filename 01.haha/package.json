@@ -1,7 +1,7 @@
 {
-    "name": "demo",
+    "name": "haha",
     "version": "1.0.0",
-    "description": "测试组件",
+    "description": "哈哈组件",
     "main": "index.js",
     "scripts": {
       "dev": "webpack-dev-server --mode development --open --content-base examples/",

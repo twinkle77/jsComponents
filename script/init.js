@@ -47,6 +47,7 @@ Metalsmith(path.join(__dirname, '../template')) // 阅读源文件
     .destination(path.join(__dirname, `../${pluginDir}`)) // 写入目标文件
     .build((err, files) => {
         spinner.stop()
+        addLink()
         console.log(
             chalk.green(`初始成功: ${pluginDir}`)
         )
@@ -98,4 +99,15 @@ function metalPlugin () {
             done
         )
     }
+}
+
+// 给md添加目录链接
+function addLink () {
+    const mark = '<!--new -->'
+    let newLink = `* [${pluginDir}.js-${pluginDesc}](https://github.com/twinkle77/jsComponents/tree/master/${pluginDir})\n${mark}`
+    let mdStr = fs.readFileSync(path.join(__dirname, '../README.md'), 'utf-8')
+    if (!mdStr.includes(mark) || mdStr.includes(newLink)) {
+        return
+    }
+    fs.writeFileSync(path.join(__dirname, '../README.md'), mdStr.replace(mark, newLink)) 
 }

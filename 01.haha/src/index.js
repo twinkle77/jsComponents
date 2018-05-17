@@ -1,6 +1,6 @@
 import './index.css'
 import { util } from './util.js'
 
-export class Demo {
+export class Haha {
 
 }
