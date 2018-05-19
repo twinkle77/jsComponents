@@ -97,6 +97,7 @@ export class Upload {
       this.fileListContainer.innerHTML = ''
     }
     newFileList.forEach((file, index) => {
+      // 赋予file文件对象唯一的index
       file.index = util.randomId(10)
       let ObjectURL
       if (window.URL) {
@@ -107,7 +108,7 @@ export class Upload {
       this.fileListContainer.insertAdjacentHTML(
         'beforeend',
         `
-          <div class="fileItem">
+          <div class="fileItem" data-index="${file.index}">
             <img class="imgPreview" src="${ObjectURL}">
             <div class="imgInfo">
               <p class="infoName">${file.name}</p>
@@ -146,24 +147,14 @@ export class Upload {
     }, false)
     // 点击“x”按钮
     this.options.fileList.addEventListener('click', (e) => {
-      let target = e.target
-      let nodeName = target.nodeName.toLowerCase()
-      if (nodeName === 'span') {
-        let index = target.dataset['index']
-        let delIndex = this.fileList.findIndex(file => {
-          return file.index === index
-        })
-        let delFile = this.fileList.splice(delIndex, 1)
-        this.options.removedFile(delFile, this.fileList)
-        let fileItem = target.parentNode.parentNode
-        fileItem.parentNode.removeChild(fileItem)
-      }
+      this._handleDel(e)
     }, false)
   }
 
+  // 业务逻辑
   _handleFile (e) {
     e.preventDefault() // 防止拖拽释放后浏览器默认打开文件
-    const { change, maxFilesSize, messageFn, message, acceptedFiles, maxFiles, uploadMultiple, addedFile } = this.options
+    const { autoUpload, change, maxFilesSize, messageFn, message, acceptedFiles, maxFiles, uploadMultiple, addedFile } = this.options
     let fileList = e.type === 'drop' ? [].slice.call(e.dataTransfer.files) : [].slice.call(this.fileInput.files)
     if (!fileList.length) return
     // 判读文件类型、大小
@@ -205,7 +196,112 @@ export class Upload {
     if (flag) {
       this._createPreview(fileList)
       change ? addedFile(fileList, '切换上传不保存旧图片') : addedFile(fileList, this.fileList) // 添加文件后的回调
+      autoUpload && this._uploadOpen(fileList)
     }
   }
 
+  // 点击'x'删除文件
+  _handleDel (e) {
+    let target = e.target
+    let nodeName = target.nodeName.toLowerCase()
+    if (nodeName === 'span') {
+      let index = target.dataset['index']
+      let delIndex = this.fileList.findIndex(file => {
+        return file.index === index
+      })
+      let delFile = this.fileList.splice(delIndex, 1)
+      this.options.removedFile(delFile, this.fileList)
+      let fileItem = target.parentNode.parentNode
+      fileItem.parentNode.removeChild(fileItem)
+    }
+  }
+
+  // 开启上传
+  _uploadOpen (fileList) {
+    fileList.forEach(file => {
+      this._uploadSend(file)
+    })
+  }
+
+  // 开始上传
+  _uploadSend (file) {
+    const { url, paramName, headers } = this.options
+    let xhr = new XMLHttpRequest()
+    let formData = new FormData()
+    formData.append(paramName, file)
+
+    // 寻找该file对应的progressbar
+    let targetFileItem = null
+    Array.from(this.fileListContainer.querySelectorAll('.fileItem'))
+      .forEach(item => {
+        if (item.dataset.index === file.index) {
+          targetFileItem = item
+          return
+        }
+      })
+    let progressbar = targetFileItem.querySelector('.progressbar')
+
+    xhr.open('post', url, true)
+    if (headers) {
+      for (let key in headers) {
+        xhr.setRequestHeader(key, headers[key])
+      }
+    }
+    xhr.onloadstart = this._xhrStart.bind(this, file)
+    xhr.onabort = this._xhrAbort.bind(this, file)
+    xhr.onload = this._xhrLoad.bind(this, file, targetFileItem)
+    xhr.onerror = this._xhrError.bind(this, file, targetFileItem)
+    xhr.upload.onprogress = this._xhrProgress.bind(this, file, progressbar)
+    xhr.send(formData)
+  }
+
+  // 上传开始
+  _xhrStart (file, event) {
+    this.options.start(event)
+    console.log('start')
+  }
+
+  // 上传中断
+  _xhrAbort (event) {
+    this.options.abort(event)
+    console.log('abort')
+  }
+
+  // 上传完成
+  _xhrLoad (file, fileItem, event) {
+    console.log('load')
+    fileItem.classList.add('success')
+    fileItem.classList.add('complete')
+    this.options.success(file, fileItem)
+    this.options.complete(file, fileItem)
+  }
+
+  // 上传出错
+  _xhrError (file, fileItem, event) {
+    console.log('error')
+    fileItem.classList.add('error')
+    fileItem.classList.add('complete')
+    this.options.error(file, fileItem)
+    this.options.complete(file, fileItem)
+  }
+
+  // 上传中
+  _xhrProgress (file, progressbar, event) {
+    if (event.lengthComputable) {
+      console.log('progress')
+      let percent = (event.loaded / event.total) * 100
+      progressbar.style.width = `${percent}%`
+    }
+  }
+
+  // 手动控制上传(切换上传才具备此功能)
+  upload () {
+    this.options.change && this._uploadOpen(this.fileList)
+  }
 }
+
+/**
+ * 所得：我觉除了赋予file文件对象id外，还应该赋予其一个isUpload的标志
+ * 这样，在追加上传的时候更容易控制
+ * 手动上传（追加上传不具备此功能）就是因为不知道this.fileList里面的file对象是否上传了，才难以实现
+ */

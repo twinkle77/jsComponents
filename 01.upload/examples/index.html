@@ -29,7 +29,10 @@
         addRemoveLinks: true,
         uploadMultiple: true,
         autoUpload: true,
-        headers: null,
+        url: "//jsonplaceholder.typicode.com/posts/", //上传路径
+        headers: {
+          token: '123456'
+        },
         addedFile: function (newFile, oldFile) {
           console.log('添加的文件', newFile)
           console.log('旧文件列表', oldFile)

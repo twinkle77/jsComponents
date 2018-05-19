@@ -124,18 +124,22 @@
 
 /* 学习 */
 
+/* 上传失败 */
 .fileList_container .fileItem.error {
   border: 1px solid #f13030;
 }
 
+/* 上传成功 */
 .fileList_container .fileItem.success .imgUploaded {
   display: block;
 }
 
+/* 上传成功后鼠标移入 */
 .fileList_container .fileItem.success:hover .imgUploaded {
   display: none;
 }
 
+/* 上传成功或失败 */
 .fileList_container .fileItem.complete .progressbar {
   display: none;
 }
