@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="upload.js">
+    <meta name="description" content="图片上传组件">
+    <title>upload.js</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./upload/upload.css">
+</head>
+<body>
+    <div class="upload_wrapper">
+    </div>
+    <div class="filelist_wrapper" style="margin-top: 10px">
+    </div>
+    <script src="./upload/upload.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+      new Upload({
+        target: '.upload_wrapper',
+        fileList: '.filelist_wrapper',
+        paramName: 'file',
+        maxFiles: 5,
+        maxFilesSize: 512,
+        acceptedFiles: '.jpg, .jpeg, .png, .gif',
+        addRemoveLinks: true,
+        uploadMultiple: true,
+        autoUpload: true,
+        headers: null,
+        addedFile: function (newFile, oldFile) {
+          console.log('添加的文件', newFile)
+          console.log('旧文件列表', oldFile)
+        },
+        removedFile: function (removeFile, fileList) {
+          console.log('被删除文件', removeFile)
+          console.log('删除后的剩下的文件', fileList)
+        },
+        start: new Function (),
+        abort: new Function (),
+        success: new Function (),
+        error: new Function (),
+        complete: new Function (),
+        uploadProgress: new Function (),
+        message: {
+          uploadText: '将文件拖到次数，或点击上传',
+          maxFilesText: '到达最多上传数目',
+          maxFilesSizeText: '文件过大',
+          singleFileText: '只能上传单个文件',
+          acceptedFilesText: '不支持该文件格式'
+        },
+        messageFn:  function (tip) {
+          alert(tip)
+        },
+        change: false
+      })
+    </script>
+</body>
+</html>
