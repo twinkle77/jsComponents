@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>图片预览实践</title>
+</head>
+<body>
+	<div>
+		<a href="https://juejin.im/post/5ae5cc6ff265da0b8c24bd02">参考文章
+		</a>
+	</div>
+	<!-- 上传容器 -->
+	<div class="upload">
+		<form action="">
+			<input type="file" class="file" multiple="multiple"
+				accept="image/jpeg,image/png,image/gif" 
+			>
+		</form>
+	</div>
+	<!-- 图片容器 -->
+	<div class="preview"></div>
+	<script>
+		var file = document.querySelector('.file'),
+			select,
+			filter = {
+				"jpeg": "/9j/4",
+				"png": "iVBORw",
+				"gif": "R0lGOD"
+			},
+			previeWrap = document.querySelector('.preview')
+
+		file.addEventListener('change', function (e) {
+			var files = this.files || e.target.files
+			if (files.length > 0) {
+				// 使用URL || FileReader来读取图片
+				if (window.URL || window.webkitURL || window.mozURL) {
+				// if (false) {
+					select.url(files)
+				} else if (window.FileReader) {
+					select.reader(files)
+				}
+			}
+		})
+		select = (function () {
+			var way = {
+				url: url,
+				reader: reader,
+				add: function (key, fn) {
+					this[key] = fn
+				}
+			}
+			// 使用window.URL读图片
+			function url (fileList) {
+				Array.from(fileList).forEach((item) => {
+					var url = window.URL || window.webkitURL || window.mozURL
+					var src = url.createObjectURL(item)
+					_preview(src)
+				})
+			}
+			// 使用FileReader读图片
+			function reader (fileList) {
+				Array.from(fileList).forEach((item) => {
+					var fileReader = new FileReader()
+					fileReader.readAsDataURL(item)
+					fileReader.onload = function (e) {
+						/*
+							data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQg
+						*/
+						let result = e.target.result
+						if (_validate(result)) {
+							alert('base64格式参数丢失')
+							return
+						}
+						_preview(result)
+					}
+				})
+			}
+
+			function _validate (src) {
+				for (var key in filter) {
+					if (src.indexOf(filter[item]) > -1) {
+						return true
+					}
+				}
+				return null
+			} 
+
+			function _preview (src) {
+				var img = new Image()
+				img.src = src
+				/*
+					console.log(src)输出：
+					blob:null/266af57d-cc23-4821-9ff2-ffe6cf2041ff
+				*/
+				img.onload = function () {
+					previeWrap.appendChild(img)
+				}
+			}
+			return way
+		})()
+	</script>
+</body>
+</html>

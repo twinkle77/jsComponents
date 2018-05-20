@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<form action="">
+		<input type="file" name="file" id="upload">
+	</form>
+	<script>
+		var fileInput = document.getElementById('upload')
+		fileInput.addEventListener('change', function (e) {
+			var file = this.files || e.target.value
+			console.log(file)
+		})
+	</script>
+</body>
+</html>

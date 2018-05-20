@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>上传、预览、裁剪</title>
+</head>
+<body>
+	<div>
+		<a href="https://segmentfault.com/a/1190000013038300">参考文章
+		</a>
+	</div>
+	<!-- 上传容器 -->
+	<div class="upload">
+		<form action="">
+			<input type="file" class="file"
+				accept="image/jpeg,image/png,image/gif" 
+			>
+		</form>
+	</div>
+	<!-- 图片预览 -->
+	<div>
+		<canvas id="cavs"></canvas>
+	</div>
+	<!-- 图片裁剪结果 -->
+	<div>
+		<canvas id="resCavs"></canvas>
+	</div>
+	<script>
+		const file = document.querySelector('.file')
+		const cavs = document.getElementById('cavs')
+		const ctx = cavs.getContext('2d')
+		const resCavs = document.getElementById('resCavs')
+		const resCtx = resCavs.getContext('2d')
+		// 利用图片绘画在canvas上来展示。所以这里不用实体的'<img>'而是直接利用'Image'对象即可
+		const img = new Image()
+
+		// 图片预览
+		file.addEventListener('change', function (e) {
+			const fileList = this.files || e.target.files
+			if (fileList.length) {
+				let reader = new FileReader()
+				reader.readAsDataURL(fileList[0])
+				reader.onload = function () {
+					let base64 = this.result
+					img.src = base64
+				}
+				img.onload = function () {
+					cavs.width = img.width
+					cavs.height = img.height
+					ctx.drawImage(img, 0, 0)
+					// 图片裁剪
+					let startX = 0
+					let startY = 0
+					let cutData = {}
+					let flag = false
+					cavs.addEventListener('mousedown', function (e) {
+						flag = true
+						startX = e.offsetX
+						startY = e.offsetY
+					})
+					cavs.addEventListener('mousemove', function (e) {
+						if (!flag) {
+							return
+						}
+						ctx.clearRect(0, 0, img.width, img.height)
+						ctx.drawImage(img, 0, 0)
+						let w = e.offsetX - startX
+						let h = e.offsetY - startY
+						ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
+						// ctx.strokeRect(0, 0, w, h)
+						ctx.fillRect(0, 0, startX + w, startY)
+						ctx.fillRect(startX + w, 0, cavs.width - startX - w, startY + h)
+						ctx.fillRect(0, startY, startX, cavs.height - startY)
+						ctx.fillRect(startX, startY + h, cavs.width - startX, cavs.height - h - startY)
+						resCtx.clearRect(0, 0, resCavs.width, resCavs.height)
+						if (w === 0 || h === 0) { // getImageData不允许后两个参数为0
+							return
+						}
+						cutData = ctx.getImageData(startX, startY, w, h)
+						resCtx.putImageData(cutData, 0, 0)
+					})
+					cavs.addEventListener('mouseup', function (e) {
+						// 将图片转为File对象上传
+						resCavs.toBlob(blod => {
+							console.log(blod)
+							var form = new FormData()
+							form.append('img', blod)
+							// 发送请求
+							console.log(form.getAll('img'))
+						})
+						flag = false
+					})
+				}
+			}
+		})
+
+		// 图片裁剪
+		
+
+	</script>
+</body>
+</html>
