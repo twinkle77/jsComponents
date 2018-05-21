@@ -41,9 +41,9 @@ File对象是特殊的Blob对象，继承了Blod的功能并将其扩展使其�
 [HTML 5 Blob对象](https://blog.csdn.net/zdy0_2004/article/details/52727250)
 格式如下：
 
-```json
+```javascript
 {
-    lastModified: 1526474903798
+  lastModified: 1526474903798
 	lastModifiedDate: Wed May 16 2018 20:48:23 GMT+0800 (CST) {}
 	name: "webpack.md"
 	size: 0	  // 限定文件大小所用
@@ -86,10 +86,10 @@ FileReader: base64,体积增大，在一些手机丢失文件格式参数，base
 * 粘贴上传
 * 拖拽上传
 
-[图片上传的多种方式](http://dwz.cn/3w6hSv)
-[图片上传组件思路篇](https://segmentfault.com/a/1190000013038300)
-[移动端图片上传的坑](https://github.com/CommanderXL/imgResize)
-[前端裁剪上传图片](http://www.renfed.com/2017/01/30/crop/)
+* [图片上传的多种方式](http://dwz.cn/3w6hSv)
+* [图片上传组件思路篇](https://segmentfault.com/a/1190000013038300)
+* [移动端图片上传的坑](https://github.com/CommanderXL/imgResize)
+* [前端裁剪上传图片](http://www.renfed.com/2017/01/30/crop/)
 
 
 
