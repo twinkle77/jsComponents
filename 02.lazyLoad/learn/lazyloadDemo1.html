@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>高斯模糊小图-lazyLoad</title>
+	<style>
+		.item {
+			background-color: #f6f6f6;
+			background-size: cover;
+			background-repeat: no-repeat;
+			position: relative;
+			overflow: hidden;
+		}
+		/*
+			div标签可以有top,left,right,bottom去拉伸
+			img无法
+			所以设置img的width为100%
+		*/
+		.item img {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			width: 100%;
+			opacity: 0;
+			transition: opacity 0.5s linear 0.25s;
+		}
+		.item .item-small-img {
+			filter: blur(50px);
+			transform: scale(1);
+		}
+		.item img.loaded {
+			opacity: 1;
+		}
+		.item .item-height {
+			padding-bottom: 66.6%;
+		}
+	</style>
+</head>
+<body>
+	<div class="item" data-large="https://cdn-images-1.medium.com/max/1800/1*sg-uLNm73whmdOgKlrQdZA.jpeg">
+		<img src="https://cdn-images-1.medium.com/freeze/max/27/1*sg-uLNm73whmdOgKlrQdZA.jpeg?q=20" alt="smallImg" class="item-small-img">
+		<div class="item-height"></div>
+	</div>
+	<script>
+		const oItem = document.querySelector('.item')
+		const smallImg = oItem.querySelector('.item-small-img')
+		let bigImgSrc = oItem.dataset['large']
+
+		// 加载小图片
+		// 小图片可以放它自己加载：http://events.jackpu.com/medium-like-image-loading/
+		let mediumImg = new Image()
+		mediumImg.src = smallImg.src
+		mediumImg.onload = function () {
+			smallImg.classList.add('loaded')
+		}
+
+		// 加载大图片
+		let bigImg = new Image()
+		bigImg.src = bigImgSrc
+		bigImg.onload = function () {
+			bigImg.classList.add('loaded')
+			oItem.appendChild(bigImg)
+		}
+		
+	</script>
+</body>
+</html>

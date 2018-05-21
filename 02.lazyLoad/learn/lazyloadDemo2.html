@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>canvas-lazyload 渐进式加载背景图片</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.banner {
+			width: 100%;
+			padding-top: 85.43%;
+		}
+		/*
+			canvas和img一样，无法使用top,left,bottom,right=0来撑开
+		*/
+		.progressive-canvas {
+			position: absolute;
+			top: 0;
+			left: 0;
+			transition: visibility .5s linear .7s, opacity .3s linear .4s;
+		}
+		.progressive-canvas-hidden {
+			opacity: 0;
+			visibility: hidden;
+		}
+	</style>
+</head>
+<!-- 
+	参考：
+	https://robin-front.github.io/code-code-hut/progressive.js/demo/index.background.html --- canvas被拉伸，我这个democanvas是没有被拉伸的
+	ctx.drawImage API:
+	https://www.cnblogs.com/superstar/p/5118683.html
+
+	大图跟缩略图跟容器的比例都是一致的能取得最好的效果
+ -->
+<body>
+	<div class="banner" data-thumb="https://robin-front.github.io/code-code-hut/progressive.js/demo/scroll_bg_1_thumb.jpg"
+	data-src="https://robin-front.github.io/code-code-hut/progressive.js/demo/scroll_bg_1.jpg"
+	>
+	</div>
+	<script>
+		/*
+			1. 拿到小图src
+			2. 小图加载完后，绘制到canvas上
+			3. 拿到大图src
+			4. 大图加载完后，添加大图，隐藏canvas
+		*/
+		function isSupportCanvas () {
+			const canvas = document.createElement('canvas')
+			return canvas.getContext && canvas.getContext('2d') ? true : false 
+		}
+
+		function progressiveBg (opts) {
+			let target = opts.target
+			
+			if (!(target instanceof Element)) {
+				target = document.querySelectorAll(target)
+			}
+
+			if (!isSupportCanvas()) {
+				Array.from(target).forEach(el => {
+					el.style.background = `url(${el.dataset['src']}) no-repeat center top / auto 100%`
+				})
+			}
+
+			Array.from(target).forEach(el => {
+				let eleHeight = el.offsetHeight
+					eleWidth = el.offsetWidth
+
+				el.style.position = 'relative'
+
+				// 使用css设置canvas宽高，会让canvas被拉伸---https://www.cnblogs.com/JamKong/p/4987163.html
+				const oCanvas = document.createElement('canvas')
+				oCanvas.classList.add('progressive-canvas')
+				oCanvas.width = eleWidth
+				oCanvas.height = eleHeight
+				el.appendChild(oCanvas)
+				const ctx = oCanvas.getContext('2d')
+
+				let bgSrc = el.dataset['src']
+				let thumbSrc = el.dataset['thumb']
+
+				// 加载缩略图
+				const mediumImg = new Image()
+				mediumImg.src = thumbSrc
+				mediumImg.onload = function () {
+					console.log(mediumImg.width, mediumImg.height)
+					// 绘制缩略图
+					let cutWidth = mediumImg.width,
+						cutHeight = mediumImg.height,
+						cutX = 0,
+						cutY = 0
+					ctx.filter = 'blur(' + 5 + 'px)';
+					ctx.drawImage(mediumImg, cutX, cutY, cutWidth, cutHeight, 0, 0, eleWidth, eleHeight)
+					// 加载大图
+					loadBg(bgSrc, oCanvas, el)
+				}
+			})
+
+			function loadBg (bgSrc, cavs, el) {
+				const img = new Image()
+				img.src = bgSrc
+				img.onload = function () {
+					console.log(img.width, img.height)
+					cavs.classList.add('progressive-canvas-hidden')
+					el.style.background = `url(${bgSrc}) no-repeat center top / auto 100%`
+				}
+			}
+		}
+
+		progressiveBg({ target: '.banner' })		
+	</script>
+</body>
+</html>
