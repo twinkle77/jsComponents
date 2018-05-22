@@ -20,7 +20,7 @@ export class LazyLoad {
 
   _bindEvent () {
     document.addEventListener('scroll', util.throttle1(() => {
-      console.log('scroll')
+      // console.log('scroll')
       this._findUnLoadImgs()
     }, 5000), false)
   }
