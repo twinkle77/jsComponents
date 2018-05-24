@@ -118,13 +118,13 @@
             ]
         }];
 
-        new Tree({
+        var app = new Tree({
             container: document.querySelector('.main'),
             nodes: nodes,
             checkbox: true,
             accordion: true,
             onCheck: function (e) {
-                // console.log(app.getChecked());
+              console.log(app.getChecked())
             },
             onExpand: function (e) {
                 // console.log(e.target)

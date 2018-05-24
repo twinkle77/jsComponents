@@ -56,6 +56,27 @@
 }
 /* 扩展符号结束 */
 
+/* 点击扩展符 */
+.tree-el .tree-parent.expanded > .tree-text .tree-expanded:before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 2px;
+  border-top: 5px solid #000000;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.tree-el .tree-parent.expanded > .tree-text .tree-expanded:after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  border-top: 3px solid #fff;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+}
+/*  */
 
 /* checkbox样式开始 */
 .tree-el .tree-checked {

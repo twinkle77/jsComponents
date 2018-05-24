@@ -27,6 +27,9 @@ export const util = {
       if (el == document) return el = false
     }
     return el
+  },
+  removeElement (el) {
+    el && el.parentNode && el.parentNode.removeChild(el)
   }
 }
 
