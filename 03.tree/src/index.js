@@ -23,6 +23,7 @@ export class Tree {
   _init () {
     this.customNodes = this._setPath(this.options.nodes)
     this._renderDom()
+    this.customNodes = this._getPath(this.customNodes)
     this._bindEvent()
   }
 
@@ -35,10 +36,30 @@ export class Tree {
   _setPath (nodes) {
     return (function setPath(nodes, parentPath) {
       return nodes.map((item, index) => {
-        let curPath = parentPath ? `${parentPath}.${index+1}` : `${index+1}`
+        let curPath = parentPath ? `${parentPath}.${index}` : `${index}`
         return Object.assign({}, item, {
           path: curPath,
           children: item.children && item.children.length ? setPath(item.children, curPath) : []
+        })
+      })
+    })(nodes)
+  }
+
+  /**
+   *
+   * @param {*} nodes
+   * 在当前node添加当前checkbox元素节点
+   *
+   */
+  _getPath (nodes) {
+    let self = this
+    return (function getPath (nodes) {
+      return nodes.map(curNode => {
+        return Object.assign({}, curNode, {
+          checkboxEl: self.options.container.querySelector(
+            `[data-path="${curNode.path}"]`
+          ),
+          children: curNode.children ? getPath(curNode.children) : []
         })
       })
     })(nodes)
@@ -68,7 +89,7 @@ export class Tree {
                 <input
                   class="tree-checkbox"
                   type="checkbox"
-                  path="${item.path}"
+                  data-path="${item.path}"
                   value="${item.value}"
                   ${item.checked ? 'checked': '' }
                 />
@@ -79,7 +100,7 @@ export class Tree {
           </li>
         `
       }).join('')
-    })(this.options.nodes)
+    })(this.customNodes)
     html = `<ul class="tree-el">${html}</ul>`
     util.innerHtml(this.options.container, 'beforeend', html)
   }
@@ -97,12 +118,60 @@ export class Tree {
 
 
   _checkboxEvent (target) {
+    let self = this
+    let path = target.dataset.path.split('.')
+    let copyPath = [...path]
+    let curConfig = this._getCurConfig(path)
+    let checked = target.checked;
 
+    // 向下传播
+    (function spreadDown (node){
+      if (node.children && node.children.length > 0) {
+        node.children.forEach(child => {
+          child.checkboxEl.checked = checked
+          child.checkboxEl.indeterminate = false
+          spreadDown(child)
+        })
+      }
+    })(curConfig);
+
+    // 向上传播
+    (function spreadUp () {
+      if (copyPath.length <= 1) return
+      copyPath.pop()
+      let parentConfig = self._getCurConfig(copyPath)
+      let checkboxLength = parentConfig.children.length
+      let checkedLength = parentConfig.children.filter(item => item.checkboxEl.checked).length
+      let indeterminateLength = parentConfig.children.filter(item => item.checkboxEl.indeterminate).length
+      parentConfig.checkboxEl.checked = checkboxLength === checkedLength
+      parentConfig.checkboxEl.indeterminate = (checkboxLength > checkedLength && checkedLength !== 0) || indeterminateLength > 0
+      spreadUp()
+    })()
+  }
+
+  _getCurConfig ([...path]) {
+    let curConfig = null
+    let pos = path.shift()
+    curConfig = this.customNodes[pos]
+    while (path.length > 0) {
+      pos = path.shift()
+      curConfig = curConfig.children[pos]
+    }
+    return curConfig
   }
 
   // 获取选中值
   getChecked () {
-
+    let checked = [];
+    (function getChecked(nodes){
+      nodes.forEach(item => {
+        if (item.checkboxEl.checked) {
+          checked.push(item.value)
+        }
+        item.children && getChecked(item.children)
+      })
+    })(this.customNodes)
+    return checked
   }
 
   // 摧毁

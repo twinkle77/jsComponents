@@ -21,7 +21,6 @@ export class Tree {
   }
 
   _init () {
-    // this.customNodes = this._setPath(this.options.nodes)
     this._renderDom()
     this._bindEvent()
   }
