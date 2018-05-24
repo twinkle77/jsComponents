@@ -1,0 +1,86 @@
+.tree-el {
+  padding: 20px
+}
+
+.tree-el ul, .tree-el li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-el ul {
+  padding: 10px 0 0 50px;
+}
+
+.tree-el li {
+  margin-bottom: 10px;
+}
+
+.tree-el .tree-parent {
+
+}
+
+.tree-el .tree-text {
+
+}
+
+/* 扩展 or 收缩 符号 开始*/
+.tree-el .tree-expanded {
+  display: inline-block;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  vertical-align: top;
+}
+
+/* 以下两套样式重合构成“向右符号” */
+.tree-el .tree-expanded:before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 3px;
+  border-left: 5px solid #000;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+.tree-el .tree-expanded:after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  border-left: 3px solid #fff;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+}
+/* 扩展符号结束 */
+
+
+/* checkbox样式开始 */
+.tree-el .tree-checked {
+  margin-right: 5px;
+  vertical-align: top;
+}
+.tree-el .tree-checked .tree-checkbox {
+  vertical-align: top;
+}
+/* checkbox样式结束 */
+
+/* label样式开始 */
+.tree-el .tree-label {
+  vertical-align: top;
+}
+/* label样式结束 */
+
+
+/* 下面这两个样式特别重要 后代选择器 */
+/* 默认ul隐藏，添加expanded的ul才能显示 */
+.tree-el ul {
+  display: none
+}
+
+.tree-el li.expanded > ul {
+  display: block;
+}
+/* 结束 */
