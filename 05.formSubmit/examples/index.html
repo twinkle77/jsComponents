@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="formSubmit.js">
+    <meta name="description" content="表单上传组件">
+    <title>formSubmit.js</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./formSubmit/formSubmit.css">
+</head>
+<body>
+    <div class="main">formSubmit</div>
+    <input type="file" id="file">
+    <input type="button" id="btn">
+
+    <script src="./formSubmit/formSubmit.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+      // document.domain = "localhost"
+      var iFrameform = new FormSubmit({
+        url: '/api',
+        blankUrl: 'http://localhost:8081/iframe.html',
+        data: {
+          name: 'lin',
+          age: 18
+        },
+        type: 'get',
+        contentType: 'multipart/form-data',
+        success: function (res) {
+          console.log('success', res)
+        },
+        error: function (err) {
+          console.log('error')
+        }
+      })
+      // form.iframeSubmit()
+      // 连续iframe不会触发第二次load
+      // form.iframeSubmit()
+      document.getElementById('btn').onclick = function () {
+        var ajaxform = new FormSubmit({
+          url: '//jsonplaceholder.typicode.com/posts/',
+          data: {
+            name: 'lin',
+            age: 18,
+            file: document.getElementById('file').files[0]
+          },
+          headers: {
+            token: 'xxx'
+          },
+          type: 'post', // get 跟 multipart/form-data 配合无效
+          contentType: 'multipart/form-data',
+          success: function (res) {
+            console.log('success', res)
+          },
+          error: function (err) {
+            console.log('error')
+          }
+        })
+        ajaxform.ajaxSubmit()
+      }
+    </script>
+</body>
+</html>
