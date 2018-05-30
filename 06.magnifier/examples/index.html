@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="magnifier.js">
+    <meta name="description" content="放大镜组件">
+    <title>magnifier.js</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./magnifier/magnifier.css">
+</head>
+<body>
+    <div class="main">
+      <a href="img/original.jpg" title="medal sygnowany S.D. (Sebastian Dadler) wybity w 1636 roku" class="zoom" data-magnifier>
+        <img src="img/thumb.jpg" alt="thumb"/>
+      </a>
+      <!-- <a href="img/original.jpg" title="medal sygnowany S.D. (Sebastian Dadler) wybity w 1636 roku" class="zoom" data-magnifier>
+        <img src="img/thumb.jpg" alt="thumb"/>
+      </a>
+      <a href="img/original.jpg" title="medal sygnowany S.D. (Sebastian Dadler) wybity w 1636 roku" class="zoom" data-magnifier>
+        <img src="img/thumb.jpg" alt="thumb"/>
+      </a> -->
+    </div>
+    <script src="./magnifier/magnifier.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+      // new Magnifier({
+      //   el: '.zoom'
+      // })
+      var obj = new Magnifier({
+      })
+      // setTimeout(function () {
+      //   obj.destory()
+      // }, 2000)
+    </script>
+</body>
+</html>
