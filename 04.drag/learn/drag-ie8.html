@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>drag 拖拽兼容性写法</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		#box {
+			width: 100px;
+			height: 100px;
+			border: 1px solid blue;
+			position: absolute;
+			display: none;
+		}
+		ul {
+			text-align: center;
+			width: 300px;
+			margin: 0 auto;
+		}
+		ul li {
+			list-style: none;
+			width: 200px;
+			height: 100px;
+			border: 1px solid #ddd;
+			margin: 3px 0;
+		}
+	</style>
+</head>
+<body>
+	<!-- 
+		参考文章:
+		http://duooduo.github.io/Share-Drag/index.html#1
+	 -->
+	 <div id="box"></div>
+	<br>
+	<ul id="list">
+		<li>111</li>
+		<li>222</li>
+		<li>333</li>
+		<li>444</li>
+		<li>555</li>
+		<li>666</li>
+	</ul>	
+
+	 <script>
+		/*
+			拖拽排序代码
+			注意点： Math.round() 结合 Math.max和Math.min
+		*/
+		var list = document.getElementById('list')
+		var li = list.getElementsByTagName('li')
+		for (var i = 0; i < li.length; i++) {
+			drap(li[i])
+		}
+
+		var ulStartTop = list.offsetTop
+		var liHeight = li[0].offsetHeight
+		var totalCount = li.length
+
+		function drap (el) {
+			el.onmousedown = function (e) {
+				e = e || window.event
+				el.style.position = 'absolute'
+				var disX = e.clientX - this.offsetLeft
+				var disY = e.clientY - this.offsetTop
+
+				el.style.position = 'absolute'
+				el.style.zIndex = '999'
+				el.style.background = '#e0543e'
+				el.style.left = el.offsetLeft + 'px'
+				el.style.top = el.offsetTop + 'px'
+
+				// 占位li
+				var placeholder = document.createElement('li')
+				placeholder.style.visibility = 'hidden'
+				list.insertBefore(placeholder, el)
+
+				// 文字选中bug：ie下，释放全局捕获
+				if (el.setCapture) {
+					el.setCapture()
+				}
+
+				document.onmousemove = function (e) {
+					e = e || window.event
+					var moveLeft = e.clientX - disX
+					var moveTop = e.clientY - disY
+
+					// 关键一
+					var currentIndex = Math.min(Math.max(Math.round((moveTop - ulStartTop) / liHeight) + 1, 0), li.length)
+
+					list.insertBefore(placeholder, li[currentIndex])					
+					el.style.left = moveLeft + 'px'
+					el.style.top = moveTop + 'px'
+				}
+
+				document.onmouseup = function () {
+					el.removeAttribute('style')
+					list.insertBefore(el, placeholder)
+					list.removeChild(placeholder)
+
+					// 文字选中bug：ie下，释放全局捕获
+					if (el.releaseCapture) {
+						el.releaseCapture()
+					}
+
+					// 关键二
+					document.onmousemove = null
+					document.onmouseup = null
+
+					return false
+				}
+
+				// 文字选中bug：标准下，阻止事件默认行为
+				return false
+			}		
+		}
+	 	/*
+	 		拖拽简单例子一：
+	 	*/
+		var oBox = document.getElementById('box')
+		box.onmousedown = function (e) {
+			e = e || window.event
+			var disX = e.clientX - this.offsetLeft
+			var disY = e.clientY - this.offsetTop
+
+			// 文字选中bug：ie下，释放全局捕获
+			if (oBox.setCapture) {
+				oBox.setCapture()
+			}
+
+			document.onmousemove = function (e) {
+				e = e || window.event
+				oBox.style.left = e.clientX - disX + 'px'
+				oBox.style.top = e.clientY - disY + 'px'
+			
+			}
+			document.onmouseup = function () {
+				document.onmousemove = null
+
+				// 文字选中bug：ie下，释放全局捕获
+				if (oBox.releaseCapture) {
+					oBox.releaseCapture()
+				}
+			}
+
+			// 文字选中bug：标准下，阻止事件默认行为
+			return false
+		}	 	
+
+
+		/*
+			拖拽的扩展：	
+				1. 限制范围的拖拽
+				2. 磁性吸附（边缘吸附、自动吸入-碰撞检测nn）
+				3. 拖拽排序
+			1.2无非就是在document.onmousemove进行判断，这里我就不写了。只写出3
+		*/
+	 </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>拖拽-oop封装</title>
+</head>
+<body>
+	<div id="box" style="width: 350px;height: 350px; border: 1px solid #ddd;" >
+		<div id="test2" style="width: 100px; height: 100px;border: 1px solid red;">10000</div>
+	</div>
+	<div id="test" style="width: 100px; height: 100px;border: 1px solid red;">1</div>
+	<div id="test1" style="width: 100px; height: 100px;border: 1px solid red;">1000</div>
+	<script>
+		var util = {
+		    posLeft: function (obj){ // 获取绝对位置left
+		        var iLeft = 0;
+		        while(obj){
+		            iLeft += obj.offsetLeft;
+		            obj = obj.offsetParent;
+		            if(obj && obj!=document.body && obj!=document.documentElement){
+		                iLeft += this.getStyle(obj, 'borderLeftWidth');
+		            }
+		        }
+		        return iLeft;
+		    },
+		    posTop: function (obj){ // 获取绝对位置top
+		        var iTop = 0;
+		        while(obj){
+		            iTop += obj.offsetTop;
+		            obj = obj.offsetParent;
+		            console.log(typeof iTop)
+		            if(obj && obj!=document.body && obj!=document.documentElement){
+		                iTop += this.getStyle(obj, 'borderTopWidth');
+		            }
+		        }
+		        return iTop;
+		    },
+		    getStyle: function (obj,attr){
+		        if(obj.currentStyle){
+		            return parseFloat( obj.currentStyle[attr]) || 0;
+		        }
+		        return parseFloat( getComputedStyle(obj)[attr]) || 0;
+		    }
+		}
+
+		function Drag (opts) {
+			if (!opts.el) {
+				throw new Error('Lack of parameters')
+			}
+			if (!(opts.el instanceof Element)) {
+				throw new Error('This el parameter needs an Element type')
+			}
+			if (opts.rangeId && !(opts.rangeId instanceof Element)) {
+				throw new Error('This rangeId parameter needs an Element type')
+			}
+
+			this.options = {
+				el: null,
+				dragStart: new Function (),
+				dragEnd: new Function (),
+				drag: new Function (),
+				rangeId: null // 用来限制的容器
+			}
+
+			for (var key in this.options) {
+				if (opts[key]) {
+					this.options[key] = opts[key]
+				}
+			}
+
+			this.init()
+		}
+
+		Drag.prototype.init = function () {
+			if (this.options.rangeId) {
+				this.rangeJson = this.setRange()
+				console.log(this.rangeJson)
+				this.options.el.style.position = 'absolute'
+	            this.options.el.style.left = this.rangeJson.left + 'px'
+	            this.options.el.style.top = this.rangeJson.top + 'px'
+			}
+
+			this._bindEvent()
+		}
+
+		Drag.prototype._bindEvent = function () {
+			var target = this.options.el
+			var that = this
+			target.onmousedown = function (e) {
+				e = e || window.event
+				that.mouseDown(e)
+				if (target.setCapture) { target.setCapture() }
+				document.onmousemove = function (e) {
+					e = e || window.event
+					that.mouseMove(e)
+				}
+				document.onmouseup = function (e) {
+					that.mouseUp()
+					if (target.setCapture) { target.setCapture() }
+				}
+			}
+		}
+
+		Drag.prototype.mouseDown = function (e) {
+			var target = this.options.el
+			target.style.zIndex = this.setZindex()
+			target.style.position = 'absolute'
+			target.className+=' draggable'
+			this.disX = e.clientX - target.offsetLeft
+			this.disY = e.clientY - target.offsetTop
+			this.options.dragStart(target)
+		}
+		
+		Drag.prototype.mouseMove = function (e) {
+			var target = this.options.el
+			var L = e.clientX - this.disX
+	        var T = e.clientY - this.disY
+	        if (this.rangeJson) { // 判断范围
+	            if ( L < this.rangeJson.left) { 
+	            	L = this.rangeJson.left
+	            } else if (L > this.rangeJson.right) {
+	            	L = this.rangeJson.right
+	            }
+	            if ( T < this.rangeJson.top ) {
+	            	T = this.rangeJson.top
+	            } else if ( T > this.rangeJson.bottom) {
+	            	T = this.rangeJson.bottom
+	            }
+	        }
+	        console.log(L, T)
+	        target.style.left = L + 'px'
+	        target.style.top = T + 'px'
+			this.options.drag(target)
+		}
+		
+		Drag.prototype.mouseUp = function () {
+			document.onmousemove = null
+			document.onmouseup = null
+			this.options.dragEnd
+			(this.options.el)
+		}
+		
+		// 让拖拽的元素永远在最上层
+		Drag.prototype.setZindex = function () {
+			var allDragEls = document.getElementsByClassName('draggable')
+			// 求出当前元素最大的index
+			var maxZindex = 99
+			for (var i = 0; i < allDragEls.length; i++) {
+				var curZindex = parseInt(allDragEls[i].style.zIndex)
+				maxZindex = (maxZindex > curZindex ? maxZindex : curZindex) 
+			}
+			return maxZindex + 1
+		}
+
+		// 计算范围
+		Drag.prototype.setRange = function () {
+			var target = this.options.el
+			var rangeEl = this.options.rangeId
+			return {
+	            left : util.posLeft(rangeEl),  
+	            right : util.posLeft(rangeEl) + rangeEl.offsetWidth - target.offsetWidth,
+	            top : util.posTop(rangeEl),
+	            bottom : util.posTop(rangeEl) + rangeEl.offsetHeight - target.offsetHeight
+        	}
+		}
+
+		new Drag({
+			el: document.getElementById('test'),
+			dragStart: function (el) {
+				el.style.background = 'blue'
+			},
+			drag: function (el) {
+				var txt = +el.innerText
+				txt++
+				el.innerText = txt
+			},
+			dragEnd: function (el) {
+				el.style.background = 'yellow'
+			}		
+		})
+
+		new Drag({
+			el: document.getElementById('test1'),
+			dragStart: function (el) {
+				el.style.background = 'blue'
+			},
+			drag: function (el) {
+				var txt = +el.innerText
+				txt++
+				el.innerText = txt
+			},
+			dragEnd: function (el) {
+				el.style.background = 'yellow'
+			}		
+		})
+
+		new Drag({
+			el: document.getElementById('test2'),
+			dragStart: function (el) {
+				el.style.background = 'blue'
+			},
+			drag: function (el) {
+				var txt = +el.innerText
+				txt++
+				el.innerText = txt
+			},
+			dragEnd: function (el) {
+				el.style.background = 'yellow'
+			},
+			rangeId: document.getElementById('box')
+		})
+	</script>
+</body>
+</html>

@@ -12,8 +12,21 @@
     <link rel="stylesheet" href="./districts/districts.css">
 </head>
 <body>
-    <div class="main">districts</div>
+    <div class="main">
+      <div id="select"></div>
+    </div>
     <script src="./districts/districts.js"></script>
     <script src="./js/main.js"></script>
+    <script>
+    new Districts({
+      el: document.getElementById('select'),
+      change: function (res) {
+        console.log('change', res)
+      },
+      callback: function (res) {
+        console.log('cb', res)
+      }
+    })
+    </script>
 </body>
 </html>
