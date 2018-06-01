@@ -14,12 +14,15 @@
 <body>
     <div class="main">
       <div id="select"></div>
+      <div id="select1"></div>
+      <div id="select2"></div>
     </div>
     <script src="./districts/districts.js"></script>
     <script src="./js/main.js"></script>
     <script>
     new Districts({
       el: document.getElementById('select'),
+      selected: ["130000", "130300", "130302"],
       change: function (res) {
         console.log('change', res)
       },
@@ -27,6 +30,36 @@
         console.log('cb', res)
       }
     })
+    new Districts({
+      el: document.getElementById('select1'),
+      selected: ["130000"],
+      change: function (res) {
+        console.log('change', res)
+      },
+      callback: function (res) {
+        console.log('cb', res)
+      }
+    })
+    var app = new Districts({
+      el: document.getElementById('select2'),
+      autoselect: true,
+      change: function (res) {
+        console.log('change', res)
+      },
+      callback: function (res) {
+        console.log('cb', res)
+      }
+    })
+    // setTimeout(() => {
+    //   app.destory()
+    // }, 3000)
+    // setTimeout(() => {
+    //   app.reset()
+    // }, 3000)
+    // setTimeout(() => {
+    //   console.log(app.getValue())
+    // }, 3000)
+    console.log(app.getCode('湖北省'))
     </script>
 </body>
 </html>

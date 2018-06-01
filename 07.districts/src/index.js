@@ -2,6 +2,8 @@ import './index.css'
 import { util } from './util.js'
 import districts from './districts'
 
+/** 参考: https://github.com/twinkle77/100plugins/blob/master/02-distpicker.js/src/js/index.js */
+
 export class Districts {
   constructor (opts) {
     this.options = Object.assign({}, Districts.DEFAULTS, opts)
@@ -14,7 +16,7 @@ export class Districts {
     return {
       placeholder: ["---- 选择省 ----", "---- 选择市 ----", "---- 选择区 ----"],
       selectNum: 3, // 下拉框的个数
-      selected: null, // 已选值
+      selected: null, // 已选值 ["130000", "130300", "130302"], ["河北省", "秦皇岛市", "海港区"]
       valueType: "name", // name or id
       name: 'select', // name: []
       change: new Function(), // 每选择一个select都会触发的回调
@@ -38,10 +40,44 @@ export class Districts {
 
     // 如果提供初始化的值
     if (!!this.options.selected) {
-
+      this._initSelected()
     } else {
       this._createOption(100000, 0)
     }
+  }
+
+  _initSelected () {
+    // 该数组的最后一个索引是不用用来递归的，只是用来确定最好一个select的selectedIndex而已
+    let selectedArr = ['100000'].concat(this.options.selected)
+
+    let whileArr = selectedArr.filter((value, index) => index <= this.selectEls.length - 1)
+    // 填充
+    let diff = this.selectEls.length - whileArr.length
+    if (diff > 0) {
+      for (let i = 0 ; i < diff; i++) {
+        whileArr.push(0)
+      }
+    }
+
+    let self = this;
+    (function fn (code, index) {
+      let selectEl = self.selectEls[index]
+      let mes = districts[code] || {}
+
+      let optionHtml = `<option>${self.options.placeholder[index]}</option>`
+      optionHtml += Object.keys(mes).map(key => {
+        return `<option value="${key}">${mes[key]}</option>`
+      }).join('')
+
+      selectEl.innerHTML = optionHtml
+
+      let selectedIndex = selectedArr[index + 1] && mes && (Object.keys(mes).findIndex(key => key == selectedArr[index + 1]))
+      selectEl.selectedIndex = selectedIndex + 1
+
+      if (index + 1 <= whileArr.length - 1) {
+        fn(selectedArr[index + 1], index + 1)
+      }
+    })('100000', 0)
   }
 
   /**
@@ -156,4 +192,41 @@ export class Districts {
   }
 
   /** 公用方法开始 */
+  reset () {
+    if (!!this.options.selected) {
+      this._initSelected()
+    } else {
+      this._createOption(100000, 0)
+    }
+  }
+
+  destory () {
+    Array.from(this.selectEls).forEach((item, index) => {
+      this.selectEls[index].innerHTML = ''
+      item.removeEventListener('change', this._handleChange, false)
+    })
+  }
+
+  getValue () {
+    return Array.from(this.selectEls).map(item => {
+      return {
+        code: item[item.selectedIndex].value,
+        name: item[item.selectedIndex].text
+      }
+    })
+  }
+
+  getCode (name, obj) {
+    obj = obj || districts
+    const keys = Object.keys(obj)
+    for (let i = 0; i < keys.length; i++) {
+      let key = keys[i]
+      if (typeof obj[key] === 'object') {
+        return this.getCode(name, obj[key])
+      } else if (name == obj[key]){
+        return key
+      }
+    }
+    return null
+  }
 }
