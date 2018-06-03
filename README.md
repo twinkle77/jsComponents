@@ -8,6 +8,7 @@
 * [05.formSubmit.js-表单上传组件](https://github.com/twinkle77/jsComponents/tree/master/05.formSubmit)
 * [06.magnifier.js-放大镜组件](https://github.com/twinkle77/jsComponents/tree/master/06.magnifier)
 * [07.districts.js-地区选择器](https://github.com/twinkle77/jsComponents/tree/master/07.districts)
+* [08.canvasMind.js-canvas树形组件](https://github.com/twinkle77/jsComponents/tree/master/08.canvasMind)
 <!--new -->
 
 ## 新建组件模板
