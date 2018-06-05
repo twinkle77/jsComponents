@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="keywords" content="onPageScroll.js">
+    <meta name="description" content="页面滚动组件">
+    <title>onPageScroll.js</title>
+    <link rel="stylesheet" href="./css/normalize.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./onPageScroll/onPageScroll.css">
+    <style>
+      /* html, body {
+        height: 100%;
+        overflow: hidden;
+      }
+      .main {
+        height: 100%;
+        background-color: #efeff4;
+      }
+      .item{
+        color: #ffffff;
+        background: #8981d8;
+      } */
+      .title{
+        margin-top: 200px;
+        text-align: center;
+      }
+    </style>
+</head>
+<body>
+    <div class="main">
+      <div class="item" style="background: #8981d8;">
+          <h2 class="title fadeInUp animated">它无孔不入</h2>
+      </div>
+
+      <div class="item" style="background: #43e1a7;">
+          <h2 class="title fadeInUp animated">你无处可藏</h2>
+      </div>
+
+      <div class="item" style="background: #ff7373;">
+          <h2 class="title fadeInUp animated">不是它可恶</h2>
+      </div>
+
+      <div class="item" style="background: #4438cc;">
+          <h2 class="title fadeInUp animated">而是它不懂你</h2>
+      </div>
+
+      <div class="item" style="background: #e047a6;">
+          <h2 class="title fadeInUp animated">我们试图</h2>
+      </div>
+
+      <div class="item" style="background: #5242e0;">
+          <h2 class="title fadeInUp animated">做些改变</h2>
+      </div>
+    </div>
+    <script src="./onPageScroll/onPageScroll.js"></script>
+    <script src="./js/main.js"></script>
+    <script>
+      var app = new OnPageScroll({
+        container: '.main',
+        item: '.item',
+        beforeMove: function (nextPage, prevPage) {
+          console.log('beforeMove', nextPage, prevPage)
+        },
+        afterMove: function (nextPage, prevPage) {
+          console.log('afterMove', nextPage, prevPage)
+        }
+        // easing: 'ease',
+        // animationTion: 1000,
+        // direction: 'vertical', // 滑动方向
+        // threshold: 50, // 滑动距离阈值
+        // pagination: true,
+        // keyboard: true,
+        // beforeMove: new Function(),
+        // afterMove: new Function()
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+html, body {
+  height: 100%;
+  overflow: hidden;
+  /* 取消滚动条 */
+}
+
+.onpage-container {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* overflow: hidden;   不能有 */
+}
+
+/* float:left; 解决上边距折叠问题 https://segmentfault.com/q/1010000008866888 */
+.onpage-container .onpage-item {
+  float: left;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.onpage-pagination {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 99;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.onpage-pagination li {
+  text-align: center;
+}
+
+.onpage-pagination li a {
+  padding: 10px;
+  width: 4px;
+  height: 4px;
+  display: block;
+}
+
+.onpage-pagination li a:before {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 10px;
+}
+
+.onpage-pagination li a.active:before {
+  width: 10px;
+  height: 10px;
+  background: none;
+  border: 1px solid black;
+  left: 8px;
+  margin-top: -4px;
+}
