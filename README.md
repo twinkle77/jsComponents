@@ -10,7 +10,6 @@
 * [07.districts.js-地区选择器](https://github.com/twinkle77/jsComponents/tree/master/07.districts)
 * [08.canvasMind.js-canvas树形组件](https://github.com/twinkle77/jsComponents/tree/master/08.canvasMind)
 * [09.onPageScroll.js-页面滚动组件](https://github.com/twinkle77/jsComponents/tree/master/09.onPageScroll)
-* [10.frameAnamation-镇动画库.js-undefined](https://github.com/twinkle77/jsComponents/tree/master/10.frameAnamation-镇动画库)
 * [10.frameAnimation.js-帧动画库](https://github.com/twinkle77/jsComponents/tree/master/10.frameAnimation)
 <!--new -->
 
